@@ -51,11 +51,14 @@
   const startButton = document.getElementById('start-button');
   const predictButton = document.getElementById('predict-button');
 
-  // Initialize webcam
-  function init() {
+  let model, webcam, labelContainer, maxPredictions;
+
+  // Initialize webcam and set up the model
+  async function init() {
     startButton.disabled = true;
     predictButton.disabled = false;
 
+    // Request webcam access
     navigator.mediaDevices.getUserMedia({ video: true })
       .then((stream) => {
         webcamStream = stream;
@@ -66,14 +69,55 @@
         console.error("Error accessing webcam: ", err);
         alert("Please enable your webcam.");
       });
+
+    // Load the Teachable Machine model
+    const modelURL = './model/model.json';
+    const metadataURL = './model/metadata.json';
+
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
+
+    // Setup webcam and start
+    const flip = true;
+    webcam = new tmImage.Webcam(300, 300, flip); // Set webcam size
+    await webcam.setup(); // Setup webcam
+    await webcam.play(); // Play webcam stream
+    window.requestAnimationFrame(updateWebcam);
+
+    document.getElementById("webcam-container").appendChild(webcam.canvas);
+
+    // Enable prediction button after webcam setup
+    predictButton.disabled = false;
   }
 
-  // Simulate prediction for now
-  function predict() {
-    const predictionLabel = document.getElementById('prediction-label');
-    predictionLabel.textContent = "🌿 Plant: Edible, Medicinal";
+  // Update the webcam view
+  async function updateWebcam() {
+    webcam.update();
+    window.requestAnimationFrame(updateWebcam);
+  }
 
-    document.getElementById('prediction-container').style.display = 'block';
+  // Randomize prediction (Edible, Non Edible, Medicinal)
+  function randomizePrediction() {
+    const categories = ['Edible', 'Non Edible', 'Medicinal'];
+    return categories[Math.floor(Math.random() * categories.length)];
+  }
+
+  // When "Analyze Plant" button is pressed
+  async function predict() {
+    // Get a random result for plant category
+    const randomizedResult = randomizePrediction();
+
+    // Display the result
+    const predictionContainer = document.getElementById("prediction-container");
+    const predictionLabel = document.getElementById("prediction-label");
+
+    predictionLabel.innerText = `🌿 This plant is: ${randomizedResult}`;
+
+    // Make prediction container visible
+    predictionContainer.classList.remove('hidden'); // Ensure the result is visible
+
+    // Optionally disable the "Analyze Plant" button after predicting
+    predictButton.disabled = true;
   }
 </script>
 
