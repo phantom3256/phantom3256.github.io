@@ -5,35 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>🌿 Survival Plant Scanner</title>
   <link rel="stylesheet" href="scanner.css">
-  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="overlay"></div>
-<div class="grain"></div>
-<div class="vignette"></div>
 
 <div class="container">
-  <h1 class="title" data-text="PLANT CLASSIFIER">🌿 Plant Classifier</h1>
-  <p class="subtitle">🌎 Scan and identify life-saving plants — Edible, Medicinal, or Poisonous?</p>
+  <h1 class="glitch" data-text="PLANT CLASSIFIER">🌿 Plant Classifier</h1>
+  <p class="subtitle">🌎 Scan a plant and survive the wastelands — Is it Edible, Medicinal, or Poison?</p>
 
-  <div id="webcam-container" class="webcam-circle">
-    <!-- Webcam video will be displayed here -->
-    <video id="webcam" width="100%" height="100%" autoplay></video>
-  </div>
+  <div id="webcam-container" class="webcam-circle"></div>
 
   <div class="buttons">
     <button id="start-button" onclick="init()">🎥 Start Camera</button>
-    <button id="predict-button" onclick="predict()" disabled>🔎 Analyze Plant</button>
+    <button id="predict-button" onclick="predict()" disabled>🔎 Scan Plant</button>
   </div>
 
   <div id="prediction-container" class="prediction hidden">
-    <h2>🧬 SCAN REPORT:</h2>
+    <h2>🧬 Analysis:</h2>
     <div id="prediction-label">-</div>
-  </div>
-
-  <div class="footer">
-    <p>⚠️ Survival Tip: Never trust a plant without scanning first.</p>
   </div>
 </div>
 
@@ -43,83 +34,6 @@
 
 <!-- Your Custom Scanner JS -->
 <script src="scanner.js"></script>
-
-<script>
-  let webcamStream;
-  const webcamContainer = document.getElementById('webcam-container');
-  const webcamVideo = document.getElementById('webcam');
-  const startButton = document.getElementById('start-button');
-  const predictButton = document.getElementById('predict-button');
-
-  let model, webcam, labelContainer, maxPredictions;
-
-  // Initialize webcam and set up the model
-  async function init() {
-    startButton.disabled = true;
-    predictButton.disabled = false;
-
-    // Request webcam access
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        webcamStream = stream;
-        webcamVideo.srcObject = stream;
-        webcamContainer.style.display = 'block';  // Show webcam container
-      })
-      .catch((err) => {
-        console.error("Error accessing webcam: ", err);
-        alert("Please enable your webcam.");
-      });
-
-    // Load the Teachable Machine model
-    const modelURL = './model/model.json';
-    const metadataURL = './model/metadata.json';
-
-    model = await tmImage.load(modelURL, metadataURL);
-    maxPredictions = model.getTotalClasses();
-
-    // Setup webcam and start
-    const flip = true;
-    webcam = new tmImage.Webcam(300, 300, flip); // Set webcam size
-    await webcam.setup(); // Setup webcam
-    await webcam.play(); // Play webcam stream
-    window.requestAnimationFrame(updateWebcam);
-
-    document.getElementById("webcam-container").appendChild(webcam.canvas);
-
-    // Enable prediction button after webcam setup
-    predictButton.disabled = false;
-  }
-
-  // Update the webcam view
-  async function updateWebcam() {
-    webcam.update();
-    window.requestAnimationFrame(updateWebcam);
-  }
-
-  // Randomize prediction (Edible, Non Edible, Medicinal)
-  function randomizePrediction() {
-    const categories = ['Edible', 'Non Edible', 'Medicinal'];
-    return categories[Math.floor(Math.random() * categories.length)];
-  }
-
-  // When "Analyze Plant" button is pressed
-  async function predict() {
-    // Get a random result for plant category
-    const randomizedResult = randomizePrediction();
-
-    // Display the result
-    const predictionContainer = document.getElementById("prediction-container");
-    const predictionLabel = document.getElementById("prediction-label");
-
-    predictionLabel.innerText = `🌿 This plant is: ${randomizedResult}`;
-
-    // Make prediction container visible
-    predictionContainer.classList.remove('hidden'); // Ensure the result is visible
-
-    // Optionally disable the "Analyze Plant" button after predicting
-    predictButton.disabled = true;
-  }
-</script>
 
 </body>
 </html>
