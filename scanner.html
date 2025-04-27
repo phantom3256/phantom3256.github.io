@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🌿 Survival Plant Scanner</title>
+  <link rel="stylesheet" href="scanner.css">
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="overlay"></div>
+<div class="grain"></div>
+<div class="vignette"></div>
+
+<div class="container">
+  <h1 class="title" data-text="PLANT CLASSIFIER">🌿 Plant Classifier</h1>
+  <p class="subtitle">🌎 Scan and identify life-saving plants — Edible, Medicinal, or Poisonous?</p>
+
+  <div id="webcam-container" class="webcam-circle"></div>
+
+  <div class="buttons">
+    <button id="start-button" onclick="init()">🎥 Start Camera</button>
+    <button id="predict-button" onclick="predict()" disabled>🔎 Analyze Plant</button>
+  </div>
+
+  <div id="prediction-container" class="prediction hidden">
+    <h2>🧬 SCAN REPORT:</h2>
+    <div id="prediction-label">-</div>
+  </div>
+
+  <div class="footer">
+    <p>⚠️ Survival Tip: Never trust a plant without scanning first.</p>
+  </div>
+</div>
+
+<!-- TensorFlow and TeachableMachine Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+<!-- Your Custom Scanner JS -->
+<script src="scanner.js"></script>
+
+</body>
+</html>
+
